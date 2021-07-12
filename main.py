@@ -21,7 +21,7 @@ import warnings
 import yaml
 from utils import source_import, get_value
 
-data_root = {'ImageNet': '/datasets01_101/imagenet_full_size/061417',
+data_root = {'ImageNet': '/home/vision/jihun/fb_decouple/dataset/imagenet',
              'Places': '/datasets01_101/Places365/041019',
              'iNaturalist18': '/checkpoint/bykang/iNaturalist18'}
 
