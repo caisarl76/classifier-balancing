@@ -126,7 +126,7 @@ if not test_mode:
     splits = ['train', 'train_plain', 'val']
     if dataset not in ['iNaturalist18', 'ImageNet']:
         splits.append('test')
-    if dataset == 'cifar100_lt':
+    if dataset == 'CIFAR100_LT':
         from data.CIFAR100_LT.imbalance_cifar import IMBALANCECIFAR100
 
         normalize = transforms.Normalize(mean=[x / 255.0 for x in [125.3, 123.0, 113.9]],
