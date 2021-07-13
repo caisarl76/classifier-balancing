@@ -93,6 +93,9 @@ class LT_Dataset(Dataset):
 # Load datasets
 def load_data(data_root, dataset, phase, batch_size, sampler_dic=None, num_workers=4, test_open=False, shuffle=True):
 
+
+
+
     if phase == 'train_plain':
         txt_split = 'train'
     elif phase == 'train_val':
@@ -101,8 +104,6 @@ def load_data(data_root, dataset, phase, batch_size, sampler_dic=None, num_worke
     else:
         txt_split = phase
     txt = './data/%s/%s_%s.txt'%(dataset, dataset, txt_split)
-    # txt = './data/%s/%s_%s.txt'%(dataset, dataset, (phase if phase != 'train_plain' else 'train'))
-
     print('Loading data from %s' % (txt))
 
     if dataset == 'iNaturalist18':
@@ -111,7 +112,6 @@ def load_data(data_root, dataset, phase, batch_size, sampler_dic=None, num_worke
     else:
         key = 'default'
     rgb_mean, rgb_std = RGB_statistics[key]['mean'], RGB_statistics[key]['std']
-
     if phase not in ['train', 'val']:
         transform = get_data_transform('test', rgb_mean, rgb_std, key)
     else:
