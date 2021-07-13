@@ -13,24 +13,24 @@ networks:
   classifier:
     def_file: ./models/DotProductClassifier.py
     optim_params: {lr: 0.2, momentum: 0.9, weight_decay: 0.0005}
-    params: {dataset: CIFAR_LT, imb_type: exp, imb_factor: 0.1, feat_dim: 2048, log_dir: ./logs/CIFAR_LT_0.1/models/resnet50_balance_e90,
+    params: {dataset: CIFAR100_LT, imb_type: exp, imb_factor: 0.1, feat_dim: 2048, log_dir: ./logs/CIFAR100_LT_0.1/models/resnet50_balance_e90,
       num_classes: 100, stage1_weights: false}
   feat_model:
     def_file: ./models/ResNext50Feature.py
     fix: false
     optim_params: {lr: 0.2, momentum: 0.9, weight_decay: 0.0005}
-    params: {dataset: CIFAR_LT, dropout: null, log_dir: ./logs/CIFAR_LT_0.1/models/resnet50_balance_e90,
+    params: {dataset: CIFAR100_LT, dropout: null, log_dir: ./logs/CIFAR100_LT_0.1/models/resnet50_balance_e90,
       stage1_weights: false, use_fc: false, use_selfatt: false, imb_type: exp, imb_factor: 0.1, beta=0, cutmix_prob=0, aug_sampler: 'random'}
 shuffle: true
 training_opt:
   backbone: resnet50
   batch_size: 512
-  dataset: CIFAR_LT
+  dataset: CIFAR100_LT
   imb_type: exp
   imb_factor: 0.1
   display_step: 10
   feature_dim: 2048
-  log_dir: ./logs/CIFAR_LT_0.1/models/resnet50_balance_e90
+  log_dir: ./logs/CIFAR100_LT_0.1/models/resnet50_balance_e90
   log_root: ./logs/ImageNet_LT
   num_classes: 100
   num_epochs: 90

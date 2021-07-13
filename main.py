@@ -27,7 +27,7 @@ import yaml
 from utils import source_import, get_value
 
 data_root = {'ImageNet': '/home/vision/jihun/fb_decouple/dataset/imagenet',
-             'CIFAR-100': '/home/vision/jihun/fb_decouple/dataset/cifar-100',
+             'CIFAR100': '/home/vision/jihun/fb_decouple/dataset/cifar-100',
              'Places': '/datasets01_101/Places365/041019',
              'iNaturalist18': '/checkpoint/bykang/iNaturalist18'}
 
