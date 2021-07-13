@@ -27,7 +27,7 @@ import yaml
 from utils import source_import, get_value
 
 data_root = {'ImageNet': '/home/vision/jihun/fb_decouple/dataset/imagenet',
-             'CIFAR100': '/home/vision/jihun/fb_decouple/dataset/cifar-100',
+             'CIFAR100': '/home/vision/jihun/fb_decouple/dataset/cifar100',
              'Places': '/datasets01_101/Places365/041019',
              'iNaturalist18': '/checkpoint/bykang/iNaturalist18'}
 
@@ -139,8 +139,8 @@ if not test_mode:
 
         data = {}
         train_dataset = IMBALANCECIFAR100(phase='train', imbalance_ratio=training_opt['imb_factor'],
-                                          root=data_root['CIFAR-100'], imb_type=training_opt['imb_type'])
-        val_dataset = torchvision.datasets.CIFAR100(data_root['CIFAR-100'], train=False, transform=transform_test)
+                                          root=data_root['CIFAR100'], imb_type=training_opt['imb_type'])
+        val_dataset = torchvision.datasets.CIFAR100(data_root['CIFAR100'], train=False, transform=transform_test)
         if sampler_dic:
             data['train'] = torch.utils.data.DataLoader(train_dataset, batch_size=training_opt['batch_size'],
                                                         shuffle=True, num_workers=args.workers, pin_memory=True,
