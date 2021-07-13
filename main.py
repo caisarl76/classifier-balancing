@@ -143,7 +143,7 @@ if not test_mode:
         val_dataset = torchvision.datasets.CIFAR100(data_root['CIFAR100'], train=False, transform=transform_test)
         if sampler_dic:
             data['train'] = torch.utils.data.DataLoader(train_dataset, batch_size=training_opt['batch_size'],
-                                                        shuffle=True, num_workers=training_opt['num_workers'],
+                                                        shuffle=False, num_workers=training_opt['num_workers'],
                                                         pin_memory=True,
                                                         sampler=sampler_dic['sampler'](train_dataset,
                                                                                        **sampler_dic['params']))
