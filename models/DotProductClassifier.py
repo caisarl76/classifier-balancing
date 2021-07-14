@@ -28,7 +28,8 @@ class DotProduct_Classifier(nn.Module):
         x = self.fc(x)
         return x, None
     
-def create_model(feat_dim, num_classes=1000, stage1_weights=False, dataset=None, log_dir=None, test=False, *args):
+def create_model(feat_dim, num_classes=1000, stage1_weights=False, dataset=None, log_dir=None, test=False,
+                 imb_type=None, imb_factor=None, *args):
     print('Loading Dot Product Classifier.')
     clf = DotProduct_Classifier(num_classes, feat_dim)
 
