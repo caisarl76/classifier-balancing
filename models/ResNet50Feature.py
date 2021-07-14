@@ -13,7 +13,8 @@ from os import path
 def create_model(use_selfatt=False, use_fc=False, dropout=None, stage1_weights=False, dataset=None, log_dir=None, test=False, *args):
     
     print('Loading Scratch ResNet 50 Feature Model.')
-    resnet50 = ResNet(Bottleneck, [3, 4, 6, 3], use_modulatedatt=use_selfatt, use_fc=use_fc, dropout=None)
+    # if dataset =='CIFAR100_LT':
+    resnet50 = ResNet(dataset, Bottleneck, [3, 4, 6, 3], use_modulatedatt=use_selfatt, use_fc=use_fc, dropout=None)
 
     if not test:
         if stage1_weights:

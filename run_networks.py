@@ -79,10 +79,10 @@ class model ():
             self.logger.log_cfg(self.config)
 
             # Add cutmix part
-            if self.config['networks']['feat_model']['params']['cutmix_prob'] != 0:
-                self.cutmix = self.config['networks']['feat_model']['params']['cutmix_prob']
-                self.beta = self.config['networks']['feat_model']['params']['beta']
-                self.aug_sampler = self.config['networks']['feat_model']['params']['aug_sampler']
+            if self.training_opt['cutmix_prob'] != 0:
+                self.cutmix = self.self.training_opt['cutmix_prob']
+                self.beta = self.training_opt['beta']
+                self.aug_sampler = self.training_opt['aug_sampler']
             else:
                 self.cutmix = False
         else:

@@ -27,7 +27,7 @@ import yaml
 from utils import source_import, get_value
 
 data_root = {'ImageNet': '/home/vision/jihun/fb_decouple/dataset/imagenet',
-             'CIFAR100': '/home/vision/jihun/fb_decouple/dataset/cifar100',
+             'CIFAR100': '/home/vision/jhkim/fb_decouple/dataset/cifar100',
              'Places': '/datasets01_101/Places365/041019',
              'iNaturalist18': '/checkpoint/bykang/iNaturalist18'}
 
@@ -128,19 +128,11 @@ if not test_mode:
         splits.append('test')
     if dataset == 'CIFAR100_LT':
         from data.CIFAR100_LT.imbalance_cifar import IMBALANCECIFAR100
-
-        normalize = transforms.Normalize(mean=[x / 255.0 for x in [125.3, 123.0, 113.9]],
-                                         std=[x / 255.0 for x in [63.0, 62.1, 66.7]])
-
-        transform_test = transforms.Compose([
-            transforms.ToTensor(),
-            normalize
-        ])
-
         data = {}
         train_dataset = IMBALANCECIFAR100(phase='train', imbalance_ratio=training_opt['imb_factor'],
                                           root=data_root['CIFAR100'], imb_type=training_opt['imb_type'])
-        val_dataset = torchvision.datasets.CIFAR100(data_root['CIFAR100'], train=False, transform=transform_test)
+        val_dataset = IMBALANCECIFAR100(phase='test', imbalance_ratio=1.0,
+                                          root=data_root['CIFAR100'], imb_type=training_opt['imb_type'])
         if sampler_dic:
             data['train'] = torch.utils.data.DataLoader(train_dataset, batch_size=training_opt['batch_size'],
                                                         shuffle=False, num_workers=training_opt['num_workers'],

@@ -94,35 +94,58 @@ class Bottleneck(nn.Module):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, use_modulatedatt=False, use_fc=False, dropout=None):
-        self.inplanes = 64
+    def __init__(self, dataset, block, layers, use_modulatedatt=False, use_fc=False, dropout=None):
         super(ResNet, self).__init__()
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
-                               bias=False)
-        self.bn1 = nn.BatchNorm2d(64)
-        self.relu = nn.ReLU(inplace=True)
-        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.layer1 = self._make_layer(block, 64, layers[0])
-        self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
-        self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
-        self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
-        self.avgpool = nn.AvgPool2d(7, stride=1)
-        
+        self.dataset = dataset
         self.use_fc = use_fc
         self.use_dropout = True if dropout else False
 
-        if self.use_fc:
-            print('Using fc.')
-            self.fc_add = nn.Linear(512*block.expansion, 512)
+        if self.dataset.startswith('CIFAR'):
+            depth = 50
+            self.inplanes = 16
+            n = int((depth -2) /9)
 
-        if self.use_dropout:
-            print('Using dropout.')
-            self.dropout = nn.Dropout(p=dropout)
-  
-        self.use_modulatedatt = use_modulatedatt
-        if self.use_modulatedatt:
-            print('Using self attention.')
-            self.modulatedatt = ModulatedAttLayer(in_channels=512*block.expansion)
+            self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=3, stride=1, padding=1, bias=False)
+            self.bn1 = nn.BatchNorm2d(self.inplanes)
+            self.relu = nn.ReLU(inplace=True)
+            self.layer1 = self._make_layer(block, 16, n)
+            self.layer2 = self._make_layer(block, 32, n, stride=2)
+            self.layer3 = self._make_layer(block, 64, n, stride=2)
+            self.avgpool = nn.AvgPool2d(8)
+            if self.use_fc:
+                print('Using fc.')
+                self.fc_add = nn.Linear(64 * block.expansion, 100)
+            self.use_modulatedatt = use_modulatedatt
+            if self.use_modulatedatt:
+                print('Using self attention.')
+                self.modulatedatt = ModulatedAttLayer(in_channels=64 * block.expansion)
+
+        else:
+            self.inplanes = 64
+
+            self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
+                                   bias=False)
+            self.bn1 = nn.BatchNorm2d(64)
+            self.relu = nn.ReLU(inplace=True)
+            self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+            self.layer1 = self._make_layer(block, 64, layers[0])
+            self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
+            self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
+            self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
+            self.avgpool = nn.AvgPool2d(7, stride=1)
+            if self.use_fc:
+                print('Using fc.')
+                self.fc_add = nn.Linear(512*block.expansion, 512)
+
+            # only imagenet resnet use dropout and modulatedatt options
+            if self.use_dropout:
+                print('Using dropout.')
+                self.dropout = nn.Dropout(p=dropout)
+
+            self.use_modulatedatt = use_modulatedatt
+            if self.use_modulatedatt:
+                print('Using self attention.')
+                self.modulatedatt = ModulatedAttLayer(in_channels=512 * block.expansion)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -150,24 +173,42 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x, *args):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)
+        if self.dataset.startswith('CIFAR'):
+            x = self.conv1(x)
+            x = self.bn1(x)
+            x = self.relu(x)
 
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
+            x = self.layer1(x)
+            x = self.layer2(x)
+            x = self.layer3(x)
 
-        if self.use_modulatedatt:
-            x, feature_maps = self.modulatedatt(x)
-        else:
-            feature_maps = None
+            if self.use_modulatedatt:
+                x, feature_maps = self.modulatedatt(x)
+            else:
+                feature_maps = None
 
-        x = self.avgpool(x)
-        
-        x = x.view(x.size(0), -1)
+            x = self.avgpool(x)
+            x = x.view(x.size(0), -1)
+
+        elif self.dataset == 'imagenet':
+            x = self.conv1(x)
+            x = self.bn1(x)
+            x = self.relu(x)
+            x = self.maxpool(x)
+
+            x = self.layer1(x)
+            x = self.layer2(x)
+            x = self.layer3(x)
+            x = self.layer4(x)
+
+            if self.use_modulatedatt:
+                x, feature_maps = self.modulatedatt(x)
+            else:
+                feature_maps = None
+
+            x = self.avgpool(x)
+
+            x = x.view(x.size(0), -1)
         
         if self.use_fc:
             x = F.relu(self.fc_add(x))
